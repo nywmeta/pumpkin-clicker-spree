@@ -206,19 +206,27 @@
       opacity: 1;
       transform: translate(0, 0) scale(1) rotate(0deg);
     }
+    50% {
+      opacity: 0.8;
+      transform: var(--fly-direction) scale(0.8) rotate(360deg);
+    }
     100% {
       opacity: 0;
-      transform: var(--fly-direction) scale(0.5) rotate(720deg);
+      transform: var(--fly-direction) translateY(120px) scale(0.3) rotate(720deg);
     }
   }
 
   @keyframes main-pumpkin-spin {
-    0% {
+    from {
       transform: rotate(0deg);
     }
-    100% {
+    to {
       transform: rotate(360deg);
     }
+  }
+
+  .pumpkin-main-image {
+    transition: animation-duration 0.1s ease-out;
   }
 
   @keyframes pulse-glow {

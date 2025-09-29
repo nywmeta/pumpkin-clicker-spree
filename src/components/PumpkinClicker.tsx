@@ -16,12 +16,14 @@ interface PumpkinClickerProps {
 export const PumpkinClicker = ({ onPumpkinClick, pumpkinsPerClick }: PumpkinClickerProps) => {
   const [clickEffects, setClickEffects] = useState<ClickEffect[]>([]);
   const [isClicking, setIsClicking] = useState(false);
-  const [isSpinning, setIsSpinning] = useState(false);
+  const [spinSpeed, setSpinSpeed] = useState(0);
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     onPumpkinClick();
     setIsClicking(true);
-    setIsSpinning(true);
+    
+    // Increase spin speed
+    setSpinSpeed(prev => Math.min(prev + 0.2, 2)); // Cap at 2x speed
     
     // Create multiple mini pumpkin effects
     const rect = e.currentTarget.getBoundingClientRect();
@@ -31,10 +33,10 @@ export const PumpkinClicker = ({ onPumpkinClick, pumpkinsPerClick }: PumpkinClic
     // Create multiple mini pumpkins for the click value
     const newEffects: ClickEffect[] = [];
     for (let i = 0; i < pumpkinsPerClick; i++) {
-      const angle = (360 / pumpkinsPerClick) * i + Math.random() * 30;
-      const distance = 80 + Math.random() * 40;
+      const angle = (360 / pumpkinsPerClick) * i + Math.random() * 60 - 30;
+      const distance = 60 + Math.random() * 30;
       const deltaX = Math.cos(angle * Math.PI / 180) * distance;
-      const deltaY = Math.sin(angle * Math.PI / 180) * distance;
+      const deltaY = Math.sin(angle * Math.PI / 180) * distance - 20; // Start slightly upward
       
       newEffects.push({
         id: Date.now() + Math.random() + i,
@@ -51,12 +53,21 @@ export const PumpkinClicker = ({ onPumpkinClick, pumpkinsPerClick }: PumpkinClic
       setClickEffects(prev => prev.filter(effect => 
         !newEffects.some(newEffect => newEffect.id === effect.id)
       ));
-    }, 1500);
+    }, 2000); // Longer duration for gravity effect
     
-    // Reset states
+    // Reset clicking state
     setTimeout(() => setIsClicking(false), 100);
-    setTimeout(() => setIsSpinning(false), 600);
   }, [onPumpkinClick, pumpkinsPerClick]);
+
+  // Gradually slow down spin speed
+  useEffect(() => {
+    if (spinSpeed > 0) {
+      const interval = setInterval(() => {
+        setSpinSpeed(prev => Math.max(prev - 0.05, 0)); // Gradually slow down
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [spinSpeed]);
 
   return (
     <div className="relative flex items-center justify-center">
@@ -69,9 +80,10 @@ export const PumpkinClicker = ({ onPumpkinClick, pumpkinsPerClick }: PumpkinClic
         <img 
           src={pumpkinImage} 
           alt="Pumpkin" 
-          className={`w-48 h-48 object-contain drop-shadow-lg ${
-            isSpinning ? "animate-spin-once" : ""
-          }`}
+          className="pumpkin-main-image w-48 h-48 object-contain drop-shadow-lg"
+          style={{
+            animation: spinSpeed > 0 ? `main-pumpkin-spin ${Math.max(0.3, 1 - spinSpeed)}s linear infinite` : 'none'
+          }}
         />
         
         {/* Mini Pumpkin Effects */}
