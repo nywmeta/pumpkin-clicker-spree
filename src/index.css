@@ -144,9 +144,13 @@
 
   /* Click Effect Animation */
   .click-effect {
-    @apply absolute pointer-events-none text-2xl font-bold;
-    color: hsl(var(--accent));
-    animation: float-up 1s ease-out forwards;
+    @apply absolute pointer-events-none;
+    animation: fly-away 1.5s ease-out forwards;
+  }
+
+  .mini-pumpkin {
+    @apply w-8 h-8;
+    animation: spin 1.5s linear infinite;
   }
 
   /* Number Counter Styling */
@@ -188,6 +192,35 @@
     }
   }
 
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes fly-away {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1) rotate(0deg);
+    }
+    100% {
+      opacity: 0;
+      transform: var(--fly-direction) scale(0.5) rotate(720deg);
+    }
+  }
+
+  @keyframes main-pumpkin-spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
   @keyframes pulse-glow {
     0%, 100% {
       box-shadow: var(--shadow-warm);
@@ -203,5 +236,9 @@
 
   .animate-float-up {
     animation: float-up 1s ease-out forwards;
+  }
+
+  .animate-spin-once {
+    animation: main-pumpkin-spin 0.6s ease-out;
   }
 }

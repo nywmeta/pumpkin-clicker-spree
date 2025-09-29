@@ -5,7 +5,7 @@ interface ClickEffect {
   id: number;
   x: number;
   y: number;
-  value: number;
+  direction: string;
 }
 
 interface PumpkinClickerProps {
@@ -16,32 +16,46 @@ interface PumpkinClickerProps {
 export const PumpkinClicker = ({ onPumpkinClick, pumpkinsPerClick }: PumpkinClickerProps) => {
   const [clickEffects, setClickEffects] = useState<ClickEffect[]>([]);
   const [isClicking, setIsClicking] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     onPumpkinClick();
     setIsClicking(true);
+    setIsSpinning(true);
     
-    // Create click effect
+    // Create multiple mini pumpkin effects
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
     
-    const newEffect: ClickEffect = {
-      id: Date.now() + Math.random(),
-      x,
-      y,
-      value: pumpkinsPerClick
-    };
+    // Create multiple mini pumpkins for the click value
+    const newEffects: ClickEffect[] = [];
+    for (let i = 0; i < pumpkinsPerClick; i++) {
+      const angle = (360 / pumpkinsPerClick) * i + Math.random() * 30;
+      const distance = 80 + Math.random() * 40;
+      const deltaX = Math.cos(angle * Math.PI / 180) * distance;
+      const deltaY = Math.sin(angle * Math.PI / 180) * distance;
+      
+      newEffects.push({
+        id: Date.now() + Math.random() + i,
+        x: centerX,
+        y: centerY,
+        direction: `translate(${deltaX}px, ${deltaY}px)`
+      });
+    }
     
-    setClickEffects(prev => [...prev, newEffect]);
+    setClickEffects(prev => [...prev, ...newEffects]);
     
-    // Remove effect after animation
+    // Remove effects after animation
     setTimeout(() => {
-      setClickEffects(prev => prev.filter(effect => effect.id !== newEffect.id));
-    }, 1000);
+      setClickEffects(prev => prev.filter(effect => 
+        !newEffects.some(newEffect => newEffect.id === effect.id)
+      ));
+    }, 1500);
     
-    // Reset clicking state
+    // Reset states
     setTimeout(() => setIsClicking(false), 100);
+    setTimeout(() => setIsSpinning(false), 600);
   }, [onPumpkinClick, pumpkinsPerClick]);
 
   return (
@@ -55,10 +69,12 @@ export const PumpkinClicker = ({ onPumpkinClick, pumpkinsPerClick }: PumpkinClic
         <img 
           src={pumpkinImage} 
           alt="Pumpkin" 
-          className="w-48 h-48 object-contain drop-shadow-lg"
+          className={`w-48 h-48 object-contain drop-shadow-lg ${
+            isSpinning ? "animate-spin-once" : ""
+          }`}
         />
         
-        {/* Click Effects */}
+        {/* Mini Pumpkin Effects */}
         {clickEffects.map((effect) => (
           <div
             key={effect.id}
@@ -66,9 +82,14 @@ export const PumpkinClicker = ({ onPumpkinClick, pumpkinsPerClick }: PumpkinClic
             style={{
               left: effect.x,
               top: effect.y,
-            }}
+              '--fly-direction': effect.direction,
+            } as React.CSSProperties}
           >
-            +{effect.value}
+            <img 
+              src={pumpkinImage} 
+              alt="Mini pumpkin" 
+              className="mini-pumpkin object-contain"
+            />
           </div>
         ))}
       </button>
