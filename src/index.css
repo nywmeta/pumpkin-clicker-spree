@@ -2,41 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Pumpkin Clicker Design System - Warm Autumn Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Autumn Background Palette */
+    --background: 35 25% 95%;
+    --foreground: 20 15% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Pumpkin Primary Colors */
+    --primary: 25 95% 55%;
+    --primary-foreground: 35 25% 95%;
+    --primary-glow: 30 100% 65%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* Warm Autumn Cards */
+    --card: 35 30% 92%;
+    --card-foreground: 20 15% 15%;
+    
+    /* Rich Harvest Secondary */
+    --secondary: 15 80% 45%;
+    --secondary-foreground: 35 25% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Golden Accent Colors */
+    --accent: 45 90% 60%;
+    --accent-foreground: 20 15% 15%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Cozy Muted Tones */
+    --muted: 35 20% 85%;
+    --muted-foreground: 20 25% 45%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Warm Borders */
+    --border: 35 25% 80%;
+    --input: 35 25% 88%;
+    --ring: 25 95% 55%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Success Green for Upgrades */
+    --success: 120 60% 40%;
+    --success-foreground: 35 25% 95%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Warm Gradients */
+    --gradient-harvest: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-autumn: linear-gradient(180deg, hsl(35 40% 96%), hsl(35 25% 92%));
+    --gradient-golden: linear-gradient(45deg, hsl(var(--accent)), hsl(45 100% 70%));
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Magical Effects */
+    --shadow-warm: 0 8px 25px -8px hsl(var(--primary) / 0.4);
+    --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.5);
+    --shadow-upgrade: 0 4px 15px -4px hsl(var(--success) / 0.3);
 
-    --radius: 0.5rem;
+    /* Animations */
+    --transition-bounce: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +118,90 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    background: var(--gradient-autumn);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* Pumpkin Click Button */
+  .pumpkin-clicker {
+    @apply relative rounded-full transition-all duration-200 transform-gpu;
+    @apply hover:scale-105 active:scale-95;
+    background: var(--gradient-harvest);
+    box-shadow: var(--shadow-warm);
+    border: 3px solid hsl(var(--border));
+  }
+
+  .pumpkin-clicker:hover {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .pumpkin-clicker:active {
+    box-shadow: var(--shadow-warm), inset 0 4px 8px rgba(0,0,0,0.2);
+  }
+
+  /* Click Effect Animation */
+  .click-effect {
+    @apply absolute pointer-events-none text-2xl font-bold;
+    color: hsl(var(--accent));
+    animation: float-up 1s ease-out forwards;
+  }
+
+  /* Number Counter Styling */
+  .counter-display {
+    @apply font-bold text-4xl;
+    background: var(--gradient-golden);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  /* Upgrade Cards */
+  .upgrade-card {
+    @apply bg-card border border-border rounded-lg p-4 transition-all duration-300;
+    @apply hover:shadow-lg hover:scale-[1.02] cursor-pointer;
+    box-shadow: var(--shadow-upgrade);
+  }
+
+  .upgrade-card.affordable {
+    @apply border-success bg-gradient-to-br from-success/10 to-success/5;
+  }
+
+  .upgrade-card.expensive {
+    @apply opacity-60 cursor-not-allowed;
+  }
+}
+
+@layer utilities {
+  /* Custom Animations */
+  @keyframes float-up {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-50px) scale(1.2);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: var(--shadow-warm);
+    }
+    50% {
+      box-shadow: var(--shadow-glow);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-float-up {
+    animation: float-up 1s ease-out forwards;
   }
 }
