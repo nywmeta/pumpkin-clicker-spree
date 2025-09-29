@@ -12,19 +12,17 @@ export const GameStats = ({ pumpkins, pumpkinsPerSecond }: GameStatsProps) => {
   };
 
   return (
-    <div className="text-center space-y-4">
-      <div className="bg-card rounded-lg p-6 border border-border shadow-lg">
-        <h2 className="text-lg font-semibold text-muted-foreground mb-2">Pumpkins</h2>
-        <div className="counter-display">
+    <div className="space-y-2">
+      <div className="bg-card/80 backdrop-blur rounded-lg p-3 border border-border shadow-lg">
+        <div className="text-2xl font-bold text-foreground">
           {formatNumber(pumpkins)}
         </div>
       </div>
       
       {pumpkinsPerSecond > 0 && (
-        <div className="bg-card rounded-lg p-4 border border-border shadow-lg">
-          <h3 className="text-sm font-medium text-muted-foreground mb-1">Per Second</h3>
-          <div className="text-2xl font-bold text-accent">
-            {formatNumber(pumpkinsPerSecond)}
+        <div className="bg-card/80 backdrop-blur rounded-lg p-2 border border-border shadow-lg">
+          <div className="text-sm font-bold text-accent">
+            {formatNumber(pumpkinsPerSecond)}/s
           </div>
         </div>
       )}

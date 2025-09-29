@@ -2,6 +2,9 @@ import { PumpkinClicker } from "@/components/PumpkinClicker";
 import { GameStats } from "@/components/GameStats";
 import { UpgradeShop } from "@/components/UpgradeShop";
 import { useGameState } from "@/hooks/useGameState";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart } from "lucide-react";
 
 const Index = () => {
   const {
@@ -14,53 +17,40 @@ const Index = () => {
   } = useGameState();
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="text-center py-8">
-        <h1 className="text-5xl font-bold text-foreground mb-2">
-          🎃 Pumpkin Clicker
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          Click the pumpkin to harvest your autumn bounty!
-        </p>
-      </header>
+    <div className="h-screen overflow-hidden bg-background flex flex-col">
+      {/* Stats in top left */}
+      <div className="absolute top-4 left-4 z-10">
+        <GameStats 
+          pumpkins={pumpkins} 
+          pumpkinsPerSecond={pumpkinsPerSecond} 
+        />
+      </div>
 
-      {/* Game Content */}
-      <div className="container mx-auto px-4 pb-8">
-        <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {/* Game Stats */}
-          <div className="lg:col-span-1">
-            <GameStats 
-              pumpkins={pumpkins} 
-              pumpkinsPerSecond={pumpkinsPerSecond} 
-            />
-          </div>
-
-          {/* Main Clicker */}
-          <div className="lg:col-span-1 flex items-center justify-center">
-            <PumpkinClicker 
-              onPumpkinClick={clickPumpkin}
-              pumpkinsPerClick={pumpkinsPerClick}
-            />
-          </div>
-
-          {/* Upgrade Shop */}
-          <div className="lg:col-span-1">
+      {/* Upgrades button in top right */}
+      <div className="absolute top-4 right-4 z-10">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="secondary" size="lg" className="rounded-full p-4">
+              <ShoppingCart className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="w-80 overflow-y-auto">
             <UpgradeShop
               upgrades={upgrades}
               pumpkins={pumpkins}
               onPurchaseUpgrade={purchaseUpgrade}
             />
-          </div>
-        </div>
+          </SheetContent>
+        </Sheet>
       </div>
 
-      {/* Footer */}
-      <footer className="text-center py-4 text-muted-foreground">
-        <p className="text-sm">
-          🍂 Happy harvesting! Your progress is automatically saved. 🍂
-        </p>
-      </footer>
+      {/* Main clicker - centered and full screen */}
+      <div className="flex-1 flex items-center justify-center">
+        <PumpkinClicker 
+          onPumpkinClick={clickPumpkin}
+          pumpkinsPerClick={pumpkinsPerClick}
+        />
+      </div>
     </div>
   );
 };
