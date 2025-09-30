@@ -14,7 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      player_progress: {
+        Row: {
+          created_at: string
+          currency: number
+          current_level: number
+          current_stage: number
+          damage_per_click: number
+          id: string
+          total_damage: number
+          updated_at: string
+          upgrades: Json | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: number
+          current_level?: number
+          current_stage?: number
+          damage_per_click?: number
+          id?: string
+          total_damage?: number
+          updated_at?: string
+          upgrades?: Json | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: number
+          current_level?: number
+          current_stage?: number
+          damage_per_click?: number
+          id?: string
+          total_damage?: number
+          updated_at?: string
+          upgrades?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
