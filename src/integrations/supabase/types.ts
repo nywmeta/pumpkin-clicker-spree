@@ -16,36 +16,45 @@ export type Database = {
     Tables: {
       player_progress: {
         Row: {
+          attack_damage: number
           created_at: string
           currency: number
           current_level: number
           current_stage: number
           damage_per_click: number
           id: string
+          left_hand_weapon: string | null
+          right_hand_weapon: string | null
           total_damage: number
           updated_at: string
           upgrades: Json | null
           user_id: string
         }
         Insert: {
+          attack_damage?: number
           created_at?: string
           currency?: number
           current_level?: number
           current_stage?: number
           damage_per_click?: number
           id?: string
+          left_hand_weapon?: string | null
+          right_hand_weapon?: string | null
           total_damage?: number
           updated_at?: string
           upgrades?: Json | null
           user_id: string
         }
         Update: {
+          attack_damage?: number
           created_at?: string
           currency?: number
           current_level?: number
           current_stage?: number
           damage_per_click?: number
           id?: string
+          left_hand_weapon?: string | null
+          right_hand_weapon?: string | null
           total_damage?: number
           updated_at?: string
           upgrades?: Json | null

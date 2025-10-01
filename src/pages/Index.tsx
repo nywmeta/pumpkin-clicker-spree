@@ -2,10 +2,23 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRPGGame } from "@/hooks/useRPGGame";
 import { HUD } from "@/components/HUD";
 import { EnemyDisplay } from "@/components/EnemyDisplay";
+import { UpgradeShop } from "@/components/UpgradeShop";
+import { WeaponSlots } from "@/components/WeaponSlots";
+import { DodgeOverlay } from "@/components/DodgeOverlay";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
-  const { progress, currentEnemy, loading: gameLoading, attackEnemy } = useRPGGame(user?.id);
+  const { 
+    progress, 
+    currentEnemy, 
+    loading: gameLoading, 
+    attackEnemy,
+    upgrades,
+    purchaseUpgrade,
+    currentAttack,
+    handleDodge,
+    handleDodgeTimeout,
+  } = useRPGGame(user?.id);
 
   if (authLoading || gameLoading || !progress || !currentEnemy) {
     return (
@@ -18,8 +31,25 @@ const Index = () => {
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-background flex flex-col">
+    <div className="h-screen overflow-hidden bg-background flex flex-col relative">
       <HUD progress={progress} onLogout={signOut} />
+      
+      <UpgradeShop 
+        upgrades={upgrades} 
+        currency={progress.currency}
+        onPurchase={purchaseUpgrade}
+      />
+      
+      <WeaponSlots 
+        leftHand={progress.left_hand_weapon}
+        rightHand={progress.right_hand_weapon}
+      />
+      
+      <DodgeOverlay
+        attack={currentAttack}
+        onDodge={handleDodge}
+        onTimeout={handleDodgeTimeout}
+      />
       
       <div className="flex-1 flex items-center justify-center">
         <EnemyDisplay enemy={currentEnemy} onAttack={attackEnemy} />
