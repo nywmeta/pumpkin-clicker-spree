@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Enemy, PlayerProgress, BossAttack, Upgrade } from "@/types/game";
+import { Enemy, PlayerProgress, BossAttack, Upgrade, InventoryItem, RarityTier } from "@/types/game";
 import { toast } from "sonner";
 
 const ENEMY_TYPES = [
@@ -76,6 +76,32 @@ const generateEnemy = (stage: number, level: number): Enemy => {
   };
 };
 
+const RARITY_TIERS: RarityTier[] = ['gray', 'light_blue', 'blue', 'green', 'yellow', 'orange', 'red', 'pink', 'violet', 'black'];
+
+const generateLoot = (level: number, isBoss: boolean): { rarity: RarityTier; damageBonus: number; materials: number } => {
+  const rarityChance = Math.random() * 100;
+  let rarityIndex = 0;
+  
+  if (isBoss) {
+    // Boss guaranteed drop with better rarity
+    const bossBonus = Math.floor(level / 10);
+    if (rarityChance > 95) rarityIndex = Math.min(9, 6 + bossBonus);
+    else if (rarityChance > 85) rarityIndex = Math.min(9, 5 + bossBonus);
+    else if (rarityChance > 70) rarityIndex = Math.min(9, 4 + bossBonus);
+    else if (rarityChance > 50) rarityIndex = Math.min(9, 3 + bossBonus);
+    else if (rarityChance > 30) rarityIndex = Math.min(9, 2 + bossBonus);
+    else rarityIndex = Math.min(9, 1 + bossBonus);
+  } else {
+    return { rarity: 'gray', damageBonus: 0, materials: 0 }; // Non-bosses don't drop
+  }
+  
+  const rarity = RARITY_TIERS[rarityIndex];
+  const damageBonus = Math.floor(10 * Math.pow(1.5, rarityIndex) * (1 + level / 20));
+  const materials = Math.floor(50 * Math.pow(1.5, rarityIndex));
+  
+  return { rarity, damageBonus, materials };
+};
+
 export const useRPGGame = (userId: string | undefined) => {
   const [progress, setProgress] = useState<PlayerProgress | null>(null);
   const [currentEnemy, setCurrentEnemy] = useState<Enemy | null>(null);
@@ -83,8 +109,9 @@ export const useRPGGame = (userId: string | undefined) => {
   const [upgrades, setUpgrades] = useState<Upgrade[]>(UPGRADES);
   const [currentAttack, setCurrentAttack] = useState<BossAttack | null>(null);
   const [attackIndex, setAttackIndex] = useState(0);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
-  // Load player progress
+  // Load player progress and inventory
   useEffect(() => {
     if (!userId) return;
 
@@ -116,6 +143,18 @@ export const useRPGGame = (userId: string | undefined) => {
           })));
         }
       }
+      
+      // Load inventory
+      const { data: inventoryData, error: invError } = await supabase
+        .from("functional_inventory")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+        
+      if (!invError && inventoryData) {
+        setInventory(inventoryData as InventoryItem[]);
+      }
+      
       setLoading(false);
     };
 
@@ -211,9 +250,122 @@ export const useRPGGame = (userId: string | undefined) => {
     setAttackIndex(prev => prev + 1);
   }, [currentAttack]);
 
+  // Equip weapon
+  const equipWeapon = useCallback(async (itemId: string, slot: 'left_hand' | 'right_hand') => {
+    if (!userId || !progress) return;
+
+    const item = inventory.find(i => i.id === itemId);
+    if (!item) return;
+
+    // Unequip current weapon in slot
+    const currentEquipped = inventory.find(i => i.equipped && i.slot === slot);
+    if (currentEquipped) {
+      await supabase
+        .from("functional_inventory")
+        .update({ equipped: false, slot: null })
+        .eq("id", currentEquipped.id);
+    }
+
+    // Equip new weapon
+    await supabase
+      .from("functional_inventory")
+      .update({ equipped: true, slot })
+      .eq("id", itemId);
+
+    // Calculate total damage from equipped weapons
+    const newInventory = inventory.map(i => {
+      if (i.id === itemId) return { ...i, equipped: true, slot };
+      if (i.id === currentEquipped?.id) return { ...i, equipped: false, slot: null };
+      return i;
+    });
+    
+    const totalWeaponDamage = newInventory
+      .filter(i => i.equipped && i.item_type === 'weapon')
+      .reduce((sum, i) => sum + i.damage_bonus, 0);
+
+    const newProgress = {
+      ...progress,
+      damage_per_click: progress.attack_damage + totalWeaponDamage + 1,
+      left_hand_weapon: slot === 'left_hand' ? item.item_name : progress.left_hand_weapon,
+      right_hand_weapon: slot === 'right_hand' ? item.item_name : progress.right_hand_weapon,
+    };
+
+    setProgress(newProgress);
+    setInventory(newInventory);
+    await saveProgress(newProgress);
+    toast.success(`Equipped ${item.item_name} in ${slot.replace('_', ' ')}`);
+  }, [inventory, userId, progress, saveProgress]);
+
+  // Salvage item
+  const salvageItem = useCallback(async (itemId: string) => {
+    if (!userId || !progress) return;
+
+    const item = inventory.find(i => i.id === itemId);
+    if (!item) return;
+
+    await supabase
+      .from("functional_inventory")
+      .delete()
+      .eq("id", itemId);
+
+    const newProgress = {
+      ...progress,
+      crafting_materials: progress.crafting_materials + item.materials,
+    };
+
+    setProgress(newProgress);
+    setInventory(inventory.filter(i => i.id !== itemId));
+    await saveProgress(newProgress);
+    toast.success(`Salvaged for ${item.materials} materials`);
+  }, [inventory, userId, progress, saveProgress]);
+
+  // Craft weapon
+  const craftWeapon = useCallback(async (rarityIndex: number) => {
+    if (!userId || !progress) return;
+
+    const cost = Math.floor(100 * Math.pow(2, rarityIndex));
+    if (progress.crafting_materials < cost) {
+      toast.error("Not enough materials!");
+      return;
+    }
+
+    const rarity = RARITY_TIERS[rarityIndex];
+    const damageBonus = Math.floor(10 * Math.pow(1.5, rarityIndex));
+    const materials = Math.floor(50 * Math.pow(1.5, rarityIndex));
+
+    const { data, error } = await supabase
+      .from("functional_inventory")
+      .insert({
+        user_id: userId,
+        item_type: 'weapon',
+        item_name: `Crafted ${rarity} Blade`,
+        rarity,
+        damage_bonus: damageBonus,
+        materials,
+        equipped: false,
+      })
+      .select()
+      .single();
+
+    if (error || !data) {
+      toast.error("Failed to craft weapon");
+      return;
+    }
+
+    const newProgress = {
+      ...progress,
+      crafting_materials: progress.crafting_materials - cost,
+    };
+
+    setProgress(newProgress);
+    setInventory([data as InventoryItem, ...inventory]);
+    await saveProgress(newProgress);
+    toast.success(`Crafted ${data.item_name}!`);
+  }, [userId, progress, inventory, saveProgress]);
+
   // Attack enemy
-  const attackEnemy = useCallback(() => {
-    if (!currentEnemy || !progress || currentAttack) return;
+  const attackEnemy = useCallback(async () => {
+    if (!currentEnemy || !progress || currentAttack || !userId) return;
 
     const newHealth = Math.max(0, currentEnemy.health - progress.damage_per_click);
     
@@ -239,13 +391,35 @@ export const useRPGGame = (userId: string | undefined) => {
       };
 
       setProgress(newProgress);
-      saveProgress(newProgress);
+      await saveProgress(newProgress);
       setCurrentEnemy(generateEnemy(newStage, newLevel));
       setAttackIndex(0);
       setCurrentAttack(null);
       
+      // Boss drops
       if (currentEnemy.isBoss) {
-        toast.success(`Boss defeated! +${currentEnemy.currency} currency`);
+        const loot = generateLoot(progress.current_level, true);
+        
+        const { data: dropData } = await supabase
+          .from("functional_inventory")
+          .insert({
+            user_id: userId,
+            item_type: 'weapon',
+            item_name: `${loot.rarity} Boss Drop`,
+            rarity: loot.rarity,
+            damage_bonus: loot.damageBonus,
+            materials: loot.materials,
+            equipped: false,
+          })
+          .select()
+          .single();
+          
+        if (dropData) {
+          setInventory([dropData as InventoryItem, ...inventory]);
+          toast.success(`Boss defeated! +${currentEnemy.currency} currency + ${loot.rarity} drop!`);
+        } else {
+          toast.success(`Boss defeated! +${currentEnemy.currency} currency`);
+        }
       }
     } else {
       setCurrentEnemy({ ...currentEnemy, health: newHealth });
@@ -262,5 +436,9 @@ export const useRPGGame = (userId: string | undefined) => {
     currentAttack,
     handleDodge,
     handleDodgeTimeout,
+    inventory,
+    equipWeapon,
+    salvageItem,
+    craftWeapon,
   };
 };

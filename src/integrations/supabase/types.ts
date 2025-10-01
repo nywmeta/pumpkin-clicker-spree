@@ -14,9 +14,49 @@ export type Database = {
   }
   public: {
     Tables: {
+      functional_inventory: {
+        Row: {
+          created_at: string | null
+          damage_bonus: number
+          equipped: boolean
+          id: string
+          item_name: string
+          item_type: string
+          materials: number
+          rarity: Database["public"]["Enums"]["rarity_tier"]
+          slot: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          damage_bonus?: number
+          equipped?: boolean
+          id?: string
+          item_name: string
+          item_type: string
+          materials?: number
+          rarity: Database["public"]["Enums"]["rarity_tier"]
+          slot?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          damage_bonus?: number
+          equipped?: boolean
+          id?: string
+          item_name?: string
+          item_type?: string
+          materials?: number
+          rarity?: Database["public"]["Enums"]["rarity_tier"]
+          slot?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       player_progress: {
         Row: {
           attack_damage: number
+          crafting_materials: number
           created_at: string
           currency: number
           current_level: number
@@ -32,6 +72,7 @@ export type Database = {
         }
         Insert: {
           attack_damage?: number
+          crafting_materials?: number
           created_at?: string
           currency?: number
           current_level?: number
@@ -47,6 +88,7 @@ export type Database = {
         }
         Update: {
           attack_damage?: number
+          crafting_materials?: number
           created_at?: string
           currency?: number
           current_level?: number
@@ -91,7 +133,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      rarity_tier:
+        | "gray"
+        | "light_blue"
+        | "blue"
+        | "green"
+        | "yellow"
+        | "orange"
+        | "red"
+        | "pink"
+        | "violet"
+        | "black"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -218,6 +270,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      rarity_tier: [
+        "gray",
+        "light_blue",
+        "blue",
+        "green",
+        "yellow",
+        "orange",
+        "red",
+        "pink",
+        "violet",
+        "black",
+      ],
+    },
   },
 } as const

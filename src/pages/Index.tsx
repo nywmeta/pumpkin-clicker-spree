@@ -5,6 +5,7 @@ import { EnemyDisplay } from "@/components/EnemyDisplay";
 import { UpgradeShop } from "@/components/UpgradeShop";
 import { WeaponSlots } from "@/components/WeaponSlots";
 import { DodgeOverlay } from "@/components/DodgeOverlay";
+import { Inventory } from "@/components/Inventory";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -18,6 +19,10 @@ const Index = () => {
     currentAttack,
     handleDodge,
     handleDodgeTimeout,
+    inventory,
+    equipWeapon,
+    salvageItem,
+    craftWeapon,
   } = useRPGGame(user?.id);
 
   if (authLoading || gameLoading || !progress || !currentEnemy) {
@@ -33,6 +38,14 @@ const Index = () => {
   return (
     <div className="h-screen overflow-hidden bg-background flex flex-col relative">
       <HUD progress={progress} onLogout={signOut} />
+      
+      <Inventory
+        items={inventory}
+        craftingMaterials={progress.crafting_materials}
+        onEquip={equipWeapon}
+        onSalvage={salvageItem}
+        onCraft={craftWeapon}
+      />
       
       <UpgradeShop 
         upgrades={upgrades} 
