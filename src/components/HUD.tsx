@@ -1,55 +1,35 @@
 import { PlayerProgress } from "@/types/game";
-import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
 
 interface HUDProps {
   progress: PlayerProgress;
-  onLogout: () => void;
 }
 
-export const HUD = ({ progress, onLogout }: HUDProps) => {
-  const formatNumber = (num: number): string => {
-    if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
-    if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
-    if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
-    return Math.floor(num).toString();
-  };
-
+export const HUD = ({ progress }: HUDProps) => {
   return (
-    <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
-      {/* Left side - Progress */}
-      <div className="space-y-2">
-        <div className="bg-card/80 backdrop-blur rounded-lg px-4 py-2 border border-border shadow-lg">
-          <div className="text-xs text-muted-foreground">Stage {progress.current_stage}</div>
-          <div className="text-lg font-bold text-foreground">
-            Level {progress.current_level}/69
+    <div className="bg-card border-b p-2 sm:p-3">
+      <div className="flex items-center justify-between max-w-screen-xl mx-auto">
+        <div className="flex items-center gap-3 sm:gap-6">
+          <div>
+            <span className="text-xs text-muted-foreground">Stage</span>
+            <div className="text-base sm:text-lg font-bold">{progress.current_stage}</div>
           </div>
-        </div>
-        
-        <div className="bg-card/80 backdrop-blur rounded-lg px-4 py-2 border border-border shadow-lg">
-          <div className="text-xs text-muted-foreground">Currency</div>
-          <div className="text-lg font-bold text-accent">
-            {formatNumber(progress.currency)}
+          <div>
+            <span className="text-xs text-muted-foreground">Level</span>
+            <div className="text-base sm:text-lg font-bold">{progress.current_level}</div>
+          </div>
+          <div>
+            <span className="text-xs text-muted-foreground">DMG</span>
+            <div className="text-base sm:text-lg font-bold">{Math.floor(progress.damage_per_click * progress.prestige_multiplier)}</div>
           </div>
         </div>
 
-        <div className="bg-card/80 backdrop-blur rounded-lg px-4 py-2 border border-border shadow-lg">
-          <div className="text-xs text-muted-foreground">Damage</div>
-          <div className="text-sm font-bold text-foreground">
-            {formatNumber(progress.damage_per_click)}
+        {progress.prestige_level > 0 && (
+          <div className="text-right">
+            <span className="text-xs text-muted-foreground">Prestige</span>
+            <div className="text-base sm:text-lg font-bold text-primary">{progress.prestige_level}</div>
           </div>
-        </div>
+        )}
       </div>
-
-      {/* Right side - Logout */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={onLogout}
-        className="bg-card/80 backdrop-blur border border-border"
-      >
-        <LogOut className="h-4 w-4" />
-      </Button>
     </div>
   );
 };

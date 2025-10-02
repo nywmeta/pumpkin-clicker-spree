@@ -64,6 +64,8 @@ export type Database = {
           damage_per_click: number
           id: string
           left_hand_weapon: string | null
+          prestige_level: number
+          prestige_multiplier: number
           right_hand_weapon: string | null
           total_damage: number
           updated_at: string
@@ -80,6 +82,8 @@ export type Database = {
           damage_per_click?: number
           id?: string
           left_hand_weapon?: string | null
+          prestige_level?: number
+          prestige_multiplier?: number
           right_hand_weapon?: string | null
           total_damage?: number
           updated_at?: string
@@ -96,6 +100,8 @@ export type Database = {
           damage_per_click?: number
           id?: string
           left_hand_weapon?: string | null
+          prestige_level?: number
+          prestige_multiplier?: number
           right_hand_weapon?: string | null
           total_damage?: number
           updated_at?: string

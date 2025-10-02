@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRPGGame } from "@/hooks/useRPGGame";
 import { HUD } from "@/components/HUD";
@@ -6,9 +7,14 @@ import { UpgradeShop } from "@/components/UpgradeShop";
 import { WeaponSlots } from "@/components/WeaponSlots";
 import { DodgeOverlay } from "@/components/DodgeOverlay";
 import { Inventory } from "@/components/Inventory";
+import { Settings } from "@/components/Settings";
+import { MobileNav } from "@/components/MobileNav";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
+  const [inventoryOpen, setInventoryOpen] = useState(false);
+  const [shopOpen, setShopOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { 
     progress, 
     currentEnemy, 
@@ -23,6 +29,7 @@ const Index = () => {
     equipWeapon,
     salvageItem,
     craftWeapon,
+    handlePrestige,
   } = useRPGGame(user?.id);
 
   if (authLoading || gameLoading || !progress || !currentEnemy) {
@@ -37,9 +44,11 @@ const Index = () => {
 
   return (
     <div className="h-screen overflow-hidden bg-background flex flex-col relative">
-      <HUD progress={progress} onLogout={signOut} />
+      <HUD progress={progress} />
       
       <Inventory
+        open={inventoryOpen}
+        onClose={() => setInventoryOpen(false)}
         items={inventory}
         craftingMaterials={progress.crafting_materials}
         onEquip={equipWeapon}
@@ -47,10 +56,21 @@ const Index = () => {
         onCraft={craftWeapon}
       />
       
-      <UpgradeShop 
+      <UpgradeShop
+        open={shopOpen}
+        onClose={() => setShopOpen(false)}
         upgrades={upgrades} 
         currency={progress.currency}
         onPurchase={purchaseUpgrade}
+      />
+
+      <Settings
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onLogout={signOut}
+        prestigeLevel={progress.prestige_level}
+        onPrestige={handlePrestige}
+        canPrestige={progress.current_stage >= 2}
       />
       
       <WeaponSlots 
@@ -64,9 +84,15 @@ const Index = () => {
         onTimeout={handleDodgeTimeout}
       />
       
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center pb-20">
         <EnemyDisplay enemy={currentEnemy} onAttack={attackEnemy} />
       </div>
+
+      <MobileNav
+        onInventoryClick={() => setInventoryOpen(true)}
+        onShopClick={() => setShopOpen(true)}
+        onSettingsClick={() => setSettingsOpen(true)}
+      />
     </div>
   );
 };

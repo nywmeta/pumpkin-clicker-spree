@@ -1,19 +1,35 @@
+import { Package, Trash2, Hammer, X } from "lucide-react";
 import { InventoryItem, RARITY_COLORS, RARITY_NAMES } from "@/types/game";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sword, Trash2, Hammer } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card } from "@/components/ui/card";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
 interface InventoryProps {
+  open: boolean;
+  onClose: () => void;
   items: InventoryItem[];
   craftingMaterials: number;
   onEquip: (itemId: string, slot: 'left_hand' | 'right_hand') => void;
   onSalvage: (itemId: string) => void;
-  onCraft: (rarity: number) => void;
+  onCraft: (rarityIndex: number) => void;
 }
 
-export const Inventory = ({ items, craftingMaterials, onEquip, onSalvage, onCraft }: InventoryProps) => {
+export const Inventory = ({
+  open,
+  onClose,
+  items,
+  craftingMaterials,
+  onEquip,
+  onSalvage,
+  onCraft,
+}: InventoryProps) => {
   const weapons = items.filter(i => i.item_type === 'weapon');
   const upgrades = items.filter(i => i.item_type === 'upgrade');
 
@@ -88,28 +104,30 @@ export const Inventory = ({ items, craftingMaterials, onEquip, onSalvage, onCraf
   );
 
   return (
-    <div className="absolute left-4 top-20 w-96 max-h-[calc(100vh-8rem)]">
-      <Card className="bg-card/90 backdrop-blur border-border p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Sword className="h-5 w-5" />
-            Inventory
-          </h2>
-          <div className="flex items-center gap-2 text-sm">
-            <Hammer className="h-4 w-4 text-accent" />
-            <span className="font-bold text-accent">{formatNumber(craftingMaterials)}</span>
-          </div>
-        </div>
+    <Sheet open={open} onOpenChange={onClose}>
+      <SheetContent side="left" className="w-full sm:w-96 overflow-hidden flex flex-col">
+        <SheetHeader>
+          <SheetTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              Inventory
+            </div>
+            <div className="flex items-center gap-2">
+              <Hammer className="h-4 w-4 text-accent" />
+              <span className="font-bold text-accent text-sm">{formatNumber(craftingMaterials)}</span>
+            </div>
+          </SheetTitle>
+        </SheetHeader>
 
-        <Tabs defaultValue="weapons" className="w-full">
+        <Tabs defaultValue="weapons" className="flex-1 flex flex-col mt-4">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="weapons">Weapons</TabsTrigger>
             <TabsTrigger value="upgrades">Upgrades</TabsTrigger>
             <TabsTrigger value="craft">Craft</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="weapons" className="mt-2">
-            <ScrollArea className="h-[400px] pr-4">
+          <TabsContent value="weapons" className="flex-1 mt-2">
+            <ScrollArea className="h-full pr-4">
               <div className="space-y-2">
                 {weapons.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8">
@@ -122,8 +140,8 @@ export const Inventory = ({ items, craftingMaterials, onEquip, onSalvage, onCraf
             </ScrollArea>
           </TabsContent>
           
-          <TabsContent value="upgrades" className="mt-2">
-            <ScrollArea className="h-[400px] pr-4">
+          <TabsContent value="upgrades" className="flex-1 mt-2">
+            <ScrollArea className="h-full pr-4">
               <div className="space-y-2">
                 {upgrades.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-8">
@@ -136,8 +154,8 @@ export const Inventory = ({ items, craftingMaterials, onEquip, onSalvage, onCraf
             </ScrollArea>
           </TabsContent>
           
-          <TabsContent value="craft" className="mt-2">
-            <ScrollArea className="h-[400px] pr-4">
+          <TabsContent value="craft" className="flex-1 mt-2">
+            <ScrollArea className="h-full pr-4">
               <div className="space-y-2">
                 {Object.entries(RARITY_NAMES).map(([rarity, name], index) => {
                   const cost = getCraftCost(index);
@@ -178,7 +196,7 @@ export const Inventory = ({ items, craftingMaterials, onEquip, onSalvage, onCraf
             </ScrollArea>
           </TabsContent>
         </Tabs>
-      </Card>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 };

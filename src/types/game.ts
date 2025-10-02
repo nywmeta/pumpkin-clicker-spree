@@ -94,4 +94,6 @@ export interface PlayerProgress {
   right_hand_weapon?: string | null;
   attack_damage: number;
   crafting_materials: number;
+  prestige_level: number;
+  prestige_multiplier: number;
 }

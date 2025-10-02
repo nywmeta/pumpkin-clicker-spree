@@ -296,6 +296,48 @@ export const useRPGGame = (userId: string | undefined) => {
     toast.success(`Equipped ${item.item_name} in ${slot.replace('_', ' ')}`);
   }, [inventory, userId, progress, saveProgress]);
 
+  // Prestige
+  const handlePrestige = useCallback(async () => {
+    if (!userId || !progress || progress.current_stage < 2) return;
+
+    // Calculate bonus multiplier (0.1 per stage completed)
+    const bonusMultiplier = 1 + (progress.current_stage - 1) * 0.1;
+    const newMultiplier = progress.prestige_multiplier + bonusMultiplier;
+
+    // Reset progress
+    const resetProgress = {
+      current_stage: 1,
+      current_level: 1,
+      damage_per_click: 1,
+      currency: 0,
+      upgrades: {},
+      attack_damage: 0,
+      crafting_materials: 0,
+      prestige_level: progress.prestige_level + 1,
+      prestige_multiplier: newMultiplier,
+      left_hand_weapon: null,
+      right_hand_weapon: null,
+    };
+
+    // Delete all inventory items
+    await supabase
+      .from("functional_inventory")
+      .delete()
+      .eq("user_id", userId);
+
+    // Update progress
+    await saveProgress(resetProgress);
+    
+    setProgress(resetProgress);
+    setInventory([]);
+    setUpgrades(UPGRADES.map(u => ({ ...u, owned: 0 })));
+    setCurrentEnemy(generateEnemy(1, 1));
+    setAttackIndex(0);
+    setCurrentAttack(null);
+    
+    toast.success(`Prestiged! New multiplier: ${newMultiplier.toFixed(1)}x`);
+  }, [userId, progress, saveProgress]);
+
   // Salvage item
   const salvageItem = useCallback(async (itemId: string) => {
     if (!userId || !progress) return;
@@ -440,5 +482,6 @@ export const useRPGGame = (userId: string | undefined) => {
     equipWeapon,
     salvageItem,
     craftWeapon,
+    handlePrestige,
   };
 };
