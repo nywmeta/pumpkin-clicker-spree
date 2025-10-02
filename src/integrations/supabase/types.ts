@@ -133,7 +133,19 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      leaderboard: {
+        Row: {
+          current_level: number | null
+          current_stage: number | null
+          damage_per_click: number | null
+          prestige_level: number | null
+          total_score: number | null
+          updated_at: string | null
+          user_id: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
