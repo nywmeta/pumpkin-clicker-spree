@@ -318,6 +318,7 @@ export const useRPGGame = (userId: string | undefined) => {
       crafting_materials: 0,
       prestige_level: progress.prestige_level + 1,
       prestige_multiplier: newMultiplier,
+      premium_currency: progress.premium_currency || 0,
       left_hand_weapon: null,
       right_hand_weapon: null,
     };

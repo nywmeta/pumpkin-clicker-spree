@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      cosmetic_inventory: {
+        Row: {
+          cosmetic_name: string
+          cosmetic_type: string
+          created_at: string
+          equipped: boolean
+          id: string
+          rarity: Database["public"]["Enums"]["rarity_tier"]
+          user_id: string
+        }
+        Insert: {
+          cosmetic_name: string
+          cosmetic_type: string
+          created_at?: string
+          equipped?: boolean
+          id?: string
+          rarity: Database["public"]["Enums"]["rarity_tier"]
+          user_id: string
+        }
+        Update: {
+          cosmetic_name?: string
+          cosmetic_type?: string
+          created_at?: string
+          equipped?: boolean
+          id?: string
+          rarity?: Database["public"]["Enums"]["rarity_tier"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       functional_inventory: {
         Row: {
           created_at: string | null
@@ -53,6 +83,30 @@ export type Database = {
         }
         Relationships: []
       }
+      lootbox_history: {
+        Row: {
+          box_type: string
+          id: string
+          items_received: Json
+          opened_at: string
+          user_id: string
+        }
+        Insert: {
+          box_type: string
+          id?: string
+          items_received: Json
+          opened_at?: string
+          user_id: string
+        }
+        Update: {
+          box_type?: string
+          id?: string
+          items_received?: Json
+          opened_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       player_progress: {
         Row: {
           attack_damage: number
@@ -64,6 +118,7 @@ export type Database = {
           damage_per_click: number
           id: string
           left_hand_weapon: string | null
+          premium_currency: number
           prestige_level: number
           prestige_multiplier: number
           right_hand_weapon: string | null
@@ -82,6 +137,7 @@ export type Database = {
           damage_per_click?: number
           id?: string
           left_hand_weapon?: string | null
+          premium_currency?: number
           prestige_level?: number
           prestige_multiplier?: number
           right_hand_weapon?: string | null
@@ -100,6 +156,7 @@ export type Database = {
           damage_per_click?: number
           id?: string
           left_hand_weapon?: string | null
+          premium_currency?: number
           prestige_level?: number
           prestige_multiplier?: number
           right_hand_weapon?: string | null

@@ -11,6 +11,9 @@ import { Settings } from "@/components/Settings";
 import { MobileNav } from "@/components/MobileNav";
 import { Leaderboard } from "@/components/Leaderboard";
 import RaidBoss from "@/components/RaidBoss";
+import LootboxOpening from "@/components/LootboxOpening";
+import CosmeticInventory from "@/components/CosmeticInventory";
+import { useCosmetics } from "@/hooks/useCosmetics";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -18,6 +21,11 @@ const Index = () => {
   const [shopOpen, setShopOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
+  const [lootboxOpen, setLootboxOpen] = useState(false);
+  const [cosmeticOpen, setCosmeticOpen] = useState(false);
+  
+  const { cosmetics, openLootbox, equipCosmetic } = useCosmetics(user?.id);
+  
   const { 
     progress, 
     currentEnemy, 
@@ -110,6 +118,22 @@ const Index = () => {
         onShopClick={() => setShopOpen(true)}
         onLeaderboardClick={() => setLeaderboardOpen(true)}
         onSettingsClick={() => setSettingsOpen(true)}
+        onLootboxClick={() => setLootboxOpen(true)}
+        onCosmeticClick={() => setCosmeticOpen(true)}
+      />
+
+      <LootboxOpening
+        open={lootboxOpen}
+        onClose={() => setLootboxOpen(false)}
+        onOpen={openLootbox}
+        premiumCurrency={progress.premium_currency || 0}
+      />
+
+      <CosmeticInventory
+        open={cosmeticOpen}
+        onClose={() => setCosmeticOpen(false)}
+        cosmetics={cosmetics}
+        onEquip={equipCosmetic}
       />
     </div>
   );

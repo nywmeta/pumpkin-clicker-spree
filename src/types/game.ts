@@ -96,4 +96,5 @@ export interface PlayerProgress {
   crafting_materials: number;
   prestige_level: number;
   prestige_multiplier: number;
+  premium_currency: number;
 }

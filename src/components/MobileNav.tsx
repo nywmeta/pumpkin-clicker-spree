@@ -1,4 +1,4 @@
-import { ShoppingBag, Package, Settings, Trophy } from "lucide-react";
+import { ShoppingBag, Package, Settings, Trophy, Gift, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MobileNavProps {
@@ -6,6 +6,8 @@ interface MobileNavProps {
   onShopClick: () => void;
   onSettingsClick: () => void;
   onLeaderboardClick: () => void;
+  onLootboxClick: () => void;
+  onCosmeticClick: () => void;
 }
 
 export const MobileNav = ({
@@ -13,10 +15,12 @@ export const MobileNav = ({
   onShopClick,
   onSettingsClick,
   onLeaderboardClick,
+  onLootboxClick,
+  onCosmeticClick,
 }: MobileNavProps) => {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t z-50">
-      <div className="grid grid-cols-4 gap-1 p-2">
+      <div className="grid grid-cols-6 gap-1 p-2">
         <Button
           variant="ghost"
           size="lg"
@@ -24,7 +28,27 @@ export const MobileNav = ({
           className="flex flex-col gap-1 h-auto py-2"
         >
           <Package className="h-5 w-5" />
-          <span className="text-xs">Inventory</span>
+          <span className="text-xs">Items</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={onCosmeticClick}
+          className="flex flex-col gap-1 h-auto py-2"
+        >
+          <Sparkles className="h-5 w-5" />
+          <span className="text-xs">Cosmetic</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={onLootboxClick}
+          className="flex flex-col gap-1 h-auto py-2"
+        >
+          <Gift className="h-5 w-5 text-yellow-500" />
+          <span className="text-xs">Lootbox</span>
         </Button>
 
         <Button

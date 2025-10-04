@@ -18,6 +18,14 @@ export const HUD = ({ progress }: HUDProps) => {
             <div className="text-base sm:text-lg font-bold">{progress.current_level}</div>
           </div>
           <div>
+            <span className="text-xs text-muted-foreground">Gold</span>
+            <div className="text-base sm:text-lg font-bold">{progress.currency.toLocaleString()}</div>
+          </div>
+          <div>
+            <span className="text-xs text-muted-foreground">💎 Gems</span>
+            <div className="text-base sm:text-lg font-bold text-blue-500">{progress.premium_currency || 0}</div>
+          </div>
+          <div>
             <span className="text-xs text-muted-foreground">DMG</span>
             <div className="text-base sm:text-lg font-bold">{Math.floor(progress.damage_per_click * progress.prestige_multiplier)}</div>
           </div>
