@@ -10,6 +10,7 @@ import { Inventory } from "@/components/Inventory";
 import { Settings } from "@/components/Settings";
 import { MobileNav } from "@/components/MobileNav";
 import { Leaderboard } from "@/components/Leaderboard";
+import RaidBoss from "@/components/RaidBoss";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -80,8 +81,16 @@ const Index = () => {
         onClose={() => setLeaderboardOpen(false)}
         currentUserId={user?.id}
       />
+
+      <div className="fixed top-4 right-4 w-96 z-40">
+        <RaidBoss 
+          userId={user?.id}
+          playerDamage={progress.attack_damage}
+          onAttack={attackEnemy}
+        />
+      </div>
       
-      <WeaponSlots 
+      <WeaponSlots
         leftHand={progress.left_hand_weapon}
         rightHand={progress.right_hand_weapon}
       />

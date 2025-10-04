@@ -131,6 +131,74 @@ export type Database = {
         }
         Relationships: []
       }
+      raid_bosses: {
+        Row: {
+          boss_name: string
+          created_at: string
+          current_health: number
+          defeated_at: string | null
+          expires_at: string
+          id: string
+          is_active: boolean
+          max_health: number
+          stage_level: number
+        }
+        Insert: {
+          boss_name: string
+          created_at?: string
+          current_health: number
+          defeated_at?: string | null
+          expires_at: string
+          id?: string
+          is_active?: boolean
+          max_health: number
+          stage_level: number
+        }
+        Update: {
+          boss_name?: string
+          created_at?: string
+          current_health?: number
+          defeated_at?: string | null
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          max_health?: number
+          stage_level?: number
+        }
+        Relationships: []
+      }
+      raid_contributions: {
+        Row: {
+          created_at: string
+          damage_dealt: number
+          id: string
+          raid_boss_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          damage_dealt?: number
+          id?: string
+          raid_boss_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          damage_dealt?: number
+          id?: string
+          raid_boss_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "raid_contributions_raid_boss_id_fkey"
+            columns: ["raid_boss_id"]
+            isOneToOne: false
+            referencedRelation: "raid_bosses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       leaderboard: {
