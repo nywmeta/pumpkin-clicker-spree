@@ -9,12 +9,14 @@ import { DodgeOverlay } from "@/components/DodgeOverlay";
 import { Inventory } from "@/components/Inventory";
 import { Settings } from "@/components/Settings";
 import { MobileNav } from "@/components/MobileNav";
+import { Leaderboard } from "@/components/Leaderboard";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const [inventoryOpen, setInventoryOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const { 
     progress, 
     currentEnemy, 
@@ -72,6 +74,12 @@ const Index = () => {
         onPrestige={handlePrestige}
         canPrestige={progress.current_stage >= 2}
       />
+
+      <Leaderboard
+        open={leaderboardOpen}
+        onClose={() => setLeaderboardOpen(false)}
+        currentUserId={user?.id}
+      />
       
       <WeaponSlots 
         leftHand={progress.left_hand_weapon}
@@ -91,6 +99,7 @@ const Index = () => {
       <MobileNav
         onInventoryClick={() => setInventoryOpen(true)}
         onShopClick={() => setShopOpen(true)}
+        onLeaderboardClick={() => setLeaderboardOpen(true)}
         onSettingsClick={() => setSettingsOpen(true)}
       />
     </div>
