@@ -97,4 +97,5 @@ export interface PlayerProgress {
   prestige_level: number;
   prestige_multiplier: number;
   premium_currency: number;
+  total_damage: number;
 }

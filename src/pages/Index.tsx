@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRPGGame } from "@/hooks/useRPGGame";
 import { HUD } from "@/components/HUD";
@@ -13,7 +13,11 @@ import { Leaderboard } from "@/components/Leaderboard";
 import RaidBoss from "@/components/RaidBoss";
 import LootboxOpening from "@/components/LootboxOpening";
 import CosmeticInventory from "@/components/CosmeticInventory";
+import { Achievements } from "@/components/Achievements";
+import { DailyReward } from "@/components/DailyReward";
 import { useCosmetics } from "@/hooks/useCosmetics";
+import { useAchievements } from "@/hooks/useAchievements";
+import { useDailyRewards } from "@/hooks/useDailyRewards";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -23,8 +27,23 @@ const Index = () => {
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const [lootboxOpen, setLootboxOpen] = useState(false);
   const [cosmeticOpen, setCosmeticOpen] = useState(false);
+  const [achievementsOpen, setAchievementsOpen] = useState(false);
+  const [dailyRewardOpen, setDailyRewardOpen] = useState(false);
   
   const { cosmetics, openLootbox, equipCosmetic } = useCosmetics(user?.id);
+  const { 
+    achievements, 
+    userAchievements, 
+    updateAchievementProgress, 
+    claimAchievementReward 
+  } = useAchievements(user?.id);
+  const { 
+    dailyReward, 
+    canClaim, 
+    claimDailyReward, 
+    getCurrentReward, 
+    DAILY_REWARDS 
+  } = useDailyRewards(user?.id);
   
   const { 
     progress, 
@@ -42,6 +61,46 @@ const Index = () => {
     craftWeapon,
     handlePrestige,
   } = useRPGGame(user?.id);
+
+  // Track achievements based on progress
+  useEffect(() => {
+    if (!user?.id || !progress) return;
+    
+    // Track damage achievements
+    updateAchievementProgress('damage_1k', progress.total_damage);
+    updateAchievementProgress('damage_10k', progress.total_damage);
+    updateAchievementProgress('damage_100k', progress.total_damage);
+    updateAchievementProgress('damage_1m', progress.total_damage);
+    
+    // Track stage achievements
+    updateAchievementProgress('stage_5', progress.current_stage);
+    updateAchievementProgress('stage_10', progress.current_stage);
+    updateAchievementProgress('stage_25', progress.current_stage);
+    updateAchievementProgress('stage_50', progress.current_stage);
+    
+    // Track prestige achievements
+    updateAchievementProgress('prestige_1', progress.prestige_level);
+    updateAchievementProgress('prestige_5', progress.prestige_level);
+    updateAchievementProgress('prestige_10', progress.prestige_level);
+  }, [progress, user?.id]);
+
+  // Track weapon collection achievements
+  useEffect(() => {
+    if (!user?.id || !inventory) return;
+    
+    const weaponCount = inventory.filter(item => item.item_type === 'weapon').length;
+    updateAchievementProgress('weapons_10', weaponCount);
+    updateAchievementProgress('weapons_50', weaponCount);
+    
+    // Check for legendary weapon
+    const hasLegendary = inventory.some(item => 
+      item.item_type === 'weapon' && 
+      ['yellow', 'orange', 'red', 'pink', 'violet', 'black'].includes(item.rarity)
+    );
+    if (hasLegendary) {
+      updateAchievementProgress('legendary_weapon', 1);
+    }
+  }, [inventory, user?.id]);
 
   if (authLoading || gameLoading || !progress || !currentEnemy) {
     return (
@@ -120,6 +179,8 @@ const Index = () => {
         onSettingsClick={() => setSettingsOpen(true)}
         onLootboxClick={() => setLootboxOpen(true)}
         onCosmeticClick={() => setCosmeticOpen(true)}
+        onAchievementsClick={() => setAchievementsOpen(true)}
+        onDailyRewardClick={() => setDailyRewardOpen(true)}
       />
 
       <LootboxOpening
@@ -134,6 +195,26 @@ const Index = () => {
         onClose={() => setCosmeticOpen(false)}
         cosmetics={cosmetics}
         onEquip={equipCosmetic}
+      />
+
+      <Achievements
+        isOpen={achievementsOpen}
+        onClose={() => setAchievementsOpen(false)}
+        achievements={achievements}
+        userAchievements={userAchievements}
+        onClaim={claimAchievementReward}
+      />
+
+      <DailyReward
+        isOpen={dailyRewardOpen}
+        onClose={() => setDailyRewardOpen(false)}
+        canClaim={canClaim}
+        currentStreak={dailyReward?.current_streak || 0}
+        longestStreak={dailyReward?.longest_streak || 0}
+        totalClaims={dailyReward?.total_claims || 0}
+        onClaim={claimDailyReward}
+        currentReward={getCurrentReward()}
+        allRewards={DAILY_REWARDS}
       />
     </div>
   );

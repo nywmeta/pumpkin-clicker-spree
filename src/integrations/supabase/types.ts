@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          achievement_key: string
+          category: string
+          created_at: string
+          description: string
+          icon: string | null
+          id: string
+          name: string
+          requirement: number
+          reward_amount: number
+          reward_type: string
+          tier: number
+        }
+        Insert: {
+          achievement_key: string
+          category: string
+          created_at?: string
+          description: string
+          icon?: string | null
+          id?: string
+          name: string
+          requirement: number
+          reward_amount: number
+          reward_type: string
+          tier?: number
+        }
+        Update: {
+          achievement_key?: string
+          category?: string
+          created_at?: string
+          description?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          requirement?: number
+          reward_amount?: number
+          reward_type?: string
+          tier?: number
+        }
+        Relationships: []
+      }
       cosmetic_inventory: {
         Row: {
           cosmetic_name: string
@@ -40,6 +82,39 @@ export type Database = {
           equipped?: boolean
           id?: string
           rarity?: Database["public"]["Enums"]["rarity_tier"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_rewards: {
+        Row: {
+          created_at: string
+          current_streak: number
+          id: string
+          last_claim_date: string | null
+          longest_streak: number
+          total_claims: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_streak?: number
+          id?: string
+          last_claim_date?: string | null
+          longest_streak?: number
+          total_claims?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_streak?: number
+          id?: string
+          last_claim_date?: string | null
+          longest_streak?: number
+          total_claims?: number
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -255,6 +330,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_achievements: {
+        Row: {
+          achievement_key: string
+          claimed: boolean
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          progress: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_key: string
+          claimed?: boolean
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          progress?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_key?: string
+          claimed?: boolean
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          progress?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

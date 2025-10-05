@@ -1,4 +1,4 @@
-import { ShoppingBag, Package, Settings, Trophy, Gift, Sparkles } from "lucide-react";
+import { ShoppingBag, Package, Settings, Trophy, Gift, Sparkles, Award, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MobileNavProps {
@@ -8,6 +8,8 @@ interface MobileNavProps {
   onLeaderboardClick: () => void;
   onLootboxClick: () => void;
   onCosmeticClick: () => void;
+  onAchievementsClick: () => void;
+  onDailyRewardClick: () => void;
 }
 
 export const MobileNav = ({
@@ -17,10 +19,12 @@ export const MobileNav = ({
   onLeaderboardClick,
   onLootboxClick,
   onCosmeticClick,
+  onAchievementsClick,
+  onDailyRewardClick,
 }: MobileNavProps) => {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t z-50">
-      <div className="grid grid-cols-6 gap-1 p-2">
+      <div className="grid grid-cols-4 sm:grid-cols-8 gap-1 p-2">
         <Button
           variant="ghost"
           size="lg"
@@ -69,6 +73,26 @@ export const MobileNav = ({
         >
           <Trophy className="h-5 w-5" />
           <span className="text-xs">Ranks</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={onAchievementsClick}
+          className="flex flex-col gap-1 h-auto py-2"
+        >
+          <Award className="h-5 w-5 text-purple-500" />
+          <span className="text-xs">Achieve</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={onDailyRewardClick}
+          className="flex flex-col gap-1 h-auto py-2"
+        >
+          <Calendar className="h-5 w-5 text-orange-500" />
+          <span className="text-xs">Daily</span>
         </Button>
 
         <Button

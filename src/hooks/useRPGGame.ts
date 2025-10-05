@@ -321,6 +321,7 @@ export const useRPGGame = (userId: string | undefined) => {
       premium_currency: progress.premium_currency || 0,
       left_hand_weapon: null,
       right_hand_weapon: null,
+      total_damage: 1,
     };
 
     // Delete all inventory items
