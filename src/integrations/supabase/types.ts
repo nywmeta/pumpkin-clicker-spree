@@ -56,6 +56,47 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          channel_type: string
+          created_at: string
+          guild_id: string | null
+          id: string
+          message: string
+          recipient_id: string | null
+          sender_id: string
+          sender_username: string
+        }
+        Insert: {
+          channel_type: string
+          created_at?: string
+          guild_id?: string | null
+          id?: string
+          message: string
+          recipient_id?: string | null
+          sender_id: string
+          sender_username: string
+        }
+        Update: {
+          channel_type?: string
+          created_at?: string
+          guild_id?: string | null
+          id?: string
+          message?: string
+          recipient_id?: string | null
+          sender_id?: string
+          sender_username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cosmetic_inventory: {
         Row: {
           cosmetic_name: string
@@ -119,6 +160,33 @@ export type Database = {
         }
         Relationships: []
       }
+      friends: {
+        Row: {
+          created_at: string
+          friend_id: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          friend_id: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          friend_id?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       functional_inventory: {
         Row: {
           created_at: string | null
@@ -155,6 +223,127 @@ export type Database = {
           rarity?: Database["public"]["Enums"]["rarity_tier"]
           slot?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      gifts: {
+        Row: {
+          amount: number | null
+          claimed_at: string | null
+          created_at: string
+          gift_type: string
+          id: string
+          item_id: string | null
+          message: string | null
+          recipient_id: string
+          sender_id: string
+          status: string
+        }
+        Insert: {
+          amount?: number | null
+          claimed_at?: string | null
+          created_at?: string
+          gift_type: string
+          id?: string
+          item_id?: string | null
+          message?: string | null
+          recipient_id: string
+          sender_id: string
+          status?: string
+        }
+        Update: {
+          amount?: number | null
+          claimed_at?: string | null
+          created_at?: string
+          gift_type?: string
+          id?: string
+          item_id?: string | null
+          message?: string | null
+          recipient_id?: string
+          sender_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gifts_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "functional_inventory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guild_members: {
+        Row: {
+          contribution_damage: number
+          guild_id: string
+          id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          contribution_damage?: number
+          guild_id: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          contribution_damage?: number
+          guild_id?: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_members_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guilds: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          leader_id: string
+          level: number
+          max_members: number
+          name: string
+          total_damage: number
+          total_members: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          leader_id: string
+          level?: number
+          max_members?: number
+          name: string
+          total_damage?: number
+          total_members?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          leader_id?: string
+          level?: number
+          max_members?: number
+          name?: string
+          total_damage?: number
+          total_members?: number
+          updated_at?: string
         }
         Relationships: []
       }

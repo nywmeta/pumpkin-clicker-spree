@@ -15,6 +15,7 @@ import LootboxOpening from "@/components/LootboxOpening";
 import CosmeticInventory from "@/components/CosmeticInventory";
 import { Achievements } from "@/components/Achievements";
 import { DailyReward } from "@/components/DailyReward";
+import { Social } from "@/components/Social";
 import { useCosmetics } from "@/hooks/useCosmetics";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useDailyRewards } from "@/hooks/useDailyRewards";
@@ -29,6 +30,7 @@ const Index = () => {
   const [cosmeticOpen, setCosmeticOpen] = useState(false);
   const [achievementsOpen, setAchievementsOpen] = useState(false);
   const [dailyRewardOpen, setDailyRewardOpen] = useState(false);
+  const [socialOpen, setSocialOpen] = useState(false);
   
   const { cosmetics, openLootbox, equipCosmetic } = useCosmetics(user?.id);
   const { 
@@ -181,6 +183,7 @@ const Index = () => {
         onCosmeticClick={() => setCosmeticOpen(true)}
         onAchievementsClick={() => setAchievementsOpen(true)}
         onDailyRewardClick={() => setDailyRewardOpen(true)}
+        onSocialClick={() => setSocialOpen(true)}
       />
 
       <LootboxOpening
@@ -215,6 +218,13 @@ const Index = () => {
         onClaim={claimDailyReward}
         currentReward={getCurrentReward()}
         allRewards={DAILY_REWARDS}
+      />
+
+      <Social
+        isOpen={socialOpen}
+        onClose={() => setSocialOpen(false)}
+        userId={user?.id}
+        username={user?.email?.split('@')[0]}
       />
     </div>
   );
