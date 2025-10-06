@@ -24,6 +24,8 @@ export interface Upgrade {
   costMultiplier: number;
   damageIncrease: number;
   owned: number;
+  category: 'attack' | 'critical' | 'magic' | 'utility' | 'special' | 'ultimate';
+  tier: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 }
 
 export interface Weapon {
