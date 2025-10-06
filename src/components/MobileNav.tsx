@@ -1,4 +1,4 @@
-import { ShoppingBag, Package, Settings, Trophy, Gift, Sparkles, Award, Calendar, Users } from "lucide-react";
+import { ShoppingBag, Package, Settings, Trophy, Gift, Sparkles, Award, Calendar, Users, Zap, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MobileNavProps {
@@ -11,6 +11,8 @@ interface MobileNavProps {
   onAchievementsClick: () => void;
   onDailyRewardClick: () => void;
   onSocialClick: () => void;
+  onBattlePassClick: () => void;
+  onChallengesClick: () => void;
 }
 
 export const MobileNav = ({
@@ -23,10 +25,12 @@ export const MobileNav = ({
   onAchievementsClick,
   onDailyRewardClick,
   onSocialClick,
+  onBattlePassClick,
+  onChallengesClick,
 }: MobileNavProps) => {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t z-50">
-      <div className="grid grid-cols-5 sm:grid-cols-9 gap-1 p-2">
+      <div className="grid grid-cols-6 sm:grid-cols-11 gap-1 p-2">
         <Button
           variant="ghost"
           size="lg"
@@ -105,6 +109,26 @@ export const MobileNav = ({
         >
           <Users className="h-5 w-5 text-green-500" />
           <span className="text-xs">Social</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={onBattlePassClick}
+          className="flex flex-col gap-1 h-auto py-2"
+        >
+          <Zap className="h-5 w-5 text-blue-500" />
+          <span className="text-xs">Pass</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={onChallengesClick}
+          className="flex flex-col gap-1 h-auto py-2"
+        >
+          <Target className="h-5 w-5 text-red-500" />
+          <span className="text-xs">Tasks</span>
         </Button>
 
         <Button

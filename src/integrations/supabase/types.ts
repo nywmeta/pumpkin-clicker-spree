@@ -56,6 +56,89 @@ export type Database = {
         }
         Relationships: []
       }
+      battle_pass_seasons: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string
+          id: string
+          is_active: boolean
+          name: string
+          season_number: number
+          start_date: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date: string
+          id?: string
+          is_active?: boolean
+          name: string
+          season_number: number
+          start_date: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          season_number?: number
+          start_date?: string
+        }
+        Relationships: []
+      }
+      battle_pass_tiers: {
+        Row: {
+          created_at: string
+          free_reward_amount: number | null
+          free_reward_cosmetic: string | null
+          free_reward_type: string
+          id: string
+          premium_reward_amount: number | null
+          premium_reward_cosmetic: string | null
+          premium_reward_type: string | null
+          season_id: string
+          tier_number: number
+          xp_required: number
+        }
+        Insert: {
+          created_at?: string
+          free_reward_amount?: number | null
+          free_reward_cosmetic?: string | null
+          free_reward_type: string
+          id?: string
+          premium_reward_amount?: number | null
+          premium_reward_cosmetic?: string | null
+          premium_reward_type?: string | null
+          season_id: string
+          tier_number: number
+          xp_required: number
+        }
+        Update: {
+          created_at?: string
+          free_reward_amount?: number | null
+          free_reward_cosmetic?: string | null
+          free_reward_type?: string
+          id?: string
+          premium_reward_amount?: number | null
+          premium_reward_cosmetic?: string | null
+          premium_reward_type?: string | null
+          season_id?: string
+          tier_number?: number
+          xp_required?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "battle_pass_tiers_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "battle_pass_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_messages: {
         Row: {
           channel_type: string
@@ -520,6 +603,53 @@ export type Database = {
           },
         ]
       }
+      seasonal_challenges: {
+        Row: {
+          category: string
+          challenge_key: string
+          created_at: string
+          description: string
+          difficulty: string
+          id: string
+          name: string
+          requirement: number
+          season_id: string
+          xp_reward: number
+        }
+        Insert: {
+          category: string
+          challenge_key: string
+          created_at?: string
+          description: string
+          difficulty: string
+          id?: string
+          name: string
+          requirement: number
+          season_id: string
+          xp_reward: number
+        }
+        Update: {
+          category?: string
+          challenge_key?: string
+          created_at?: string
+          description?: string
+          difficulty?: string
+          id?: string
+          name?: string
+          requirement?: number
+          season_id?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seasonal_challenges_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "battle_pass_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_achievements: {
         Row: {
           achievement_key: string
@@ -555,6 +685,97 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_battle_pass_progress: {
+        Row: {
+          claimed_free_tiers: number[]
+          claimed_premium_tiers: number[]
+          created_at: string
+          current_tier: number
+          current_xp: number
+          has_premium: boolean
+          id: string
+          season_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          claimed_free_tiers?: number[]
+          claimed_premium_tiers?: number[]
+          created_at?: string
+          current_tier?: number
+          current_xp?: number
+          has_premium?: boolean
+          id?: string
+          season_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          claimed_free_tiers?: number[]
+          claimed_premium_tiers?: number[]
+          created_at?: string
+          current_tier?: number
+          current_xp?: number
+          has_premium?: boolean
+          id?: string
+          season_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_battle_pass_progress_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "battle_pass_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_seasonal_challenges: {
+        Row: {
+          challenge_key: string
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          progress: number
+          season_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          challenge_key: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          progress?: number
+          season_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          challenge_key?: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          progress?: number
+          season_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_seasonal_challenges_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "battle_pass_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

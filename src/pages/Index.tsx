@@ -16,9 +16,13 @@ import CosmeticInventory from "@/components/CosmeticInventory";
 import { Achievements } from "@/components/Achievements";
 import { DailyReward } from "@/components/DailyReward";
 import { Social } from "@/components/Social";
+import { BattlePass } from "@/components/BattlePass";
+import { SeasonalChallenges } from "@/components/SeasonalChallenges";
 import { useCosmetics } from "@/hooks/useCosmetics";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useDailyRewards } from "@/hooks/useDailyRewards";
+import { useBattlePass } from "@/hooks/useBattlePass";
+import { useSeasonalChallenges } from "@/hooks/useSeasonalChallenges";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -31,6 +35,8 @@ const Index = () => {
   const [achievementsOpen, setAchievementsOpen] = useState(false);
   const [dailyRewardOpen, setDailyRewardOpen] = useState(false);
   const [socialOpen, setSocialOpen] = useState(false);
+  const [battlePassOpen, setBattlePassOpen] = useState(false);
+  const [challengesOpen, setChallengesOpen] = useState(false);
   
   const { cosmetics, openLootbox, equipCosmetic } = useCosmetics(user?.id);
   const { 
@@ -46,6 +52,23 @@ const Index = () => {
     getCurrentReward, 
     DAILY_REWARDS 
   } = useDailyRewards(user?.id);
+  
+  const {
+    activeSeason,
+    tiers,
+    userProgress: battlePassProgress,
+    loading: battlePassLoading,
+    addXP,
+    claimReward,
+    purchasePremium
+  } = useBattlePass(user?.id);
+  
+  const {
+    challenges,
+    userProgress: challengeProgress,
+    loading: challengesLoading,
+    updateChallengeProgress
+  } = useSeasonalChallenges(user?.id, addXP);
   
   const { 
     progress, 
@@ -101,6 +124,37 @@ const Index = () => {
     );
     if (hasLegendary) {
       updateAchievementProgress('legendary_weapon', 1);
+    }
+  }, [inventory, user?.id]);
+
+  // Track seasonal challenges
+  useEffect(() => {
+    if (!user?.id || !progress) return;
+    
+    // Update damage challenges
+    updateChallengeProgress('season1_damage_10k', progress.total_damage);
+    updateChallengeProgress('season1_damage_100k', progress.total_damage);
+    updateChallengeProgress('season1_damage_1m', progress.total_damage);
+    
+    // Update stage challenges
+    updateChallengeProgress('season1_stages_10', progress.current_stage);
+    updateChallengeProgress('season1_stages_25', progress.current_stage);
+  }, [progress, user?.id]);
+
+  // Track crafting challenges
+  useEffect(() => {
+    if (!user?.id || !inventory) return;
+    
+    const craftedCount = inventory.filter(item => item.item_type === 'weapon').length;
+    updateChallengeProgress('season1_crafts_20', craftedCount);
+    
+    // Check for legendary craft
+    const hasLegendary = inventory.some(item => 
+      item.item_type === 'weapon' && 
+      ['yellow', 'orange', 'red', 'pink', 'violet', 'black'].includes(item.rarity)
+    );
+    if (hasLegendary) {
+      updateChallengeProgress('season1_legendary_craft', 1);
     }
   }, [inventory, user?.id]);
 
@@ -184,6 +238,8 @@ const Index = () => {
         onAchievementsClick={() => setAchievementsOpen(true)}
         onDailyRewardClick={() => setDailyRewardOpen(true)}
         onSocialClick={() => setSocialOpen(true)}
+        onBattlePassClick={() => setBattlePassOpen(true)}
+        onChallengesClick={() => setChallengesOpen(true)}
       />
 
       <LootboxOpening
@@ -225,6 +281,23 @@ const Index = () => {
         onClose={() => setSocialOpen(false)}
         userId={user?.id}
         username={user?.email?.split('@')[0]}
+      />
+
+      <BattlePass
+        open={battlePassOpen}
+        onClose={() => setBattlePassOpen(false)}
+        activeSeason={activeSeason}
+        tiers={tiers}
+        userProgress={battlePassProgress}
+        onClaimReward={claimReward}
+        onPurchasePremium={purchasePremium}
+      />
+
+      <SeasonalChallenges
+        open={challengesOpen}
+        onClose={() => setChallengesOpen(false)}
+        challenges={challenges}
+        userProgress={challengeProgress}
       />
     </div>
   );
