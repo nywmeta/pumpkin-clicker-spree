@@ -84,44 +84,29 @@ export const useAchievements = (userId: string | undefined) => {
 
       const completed = progress >= achievement.requirement;
 
-      if (userAchievement) {
-        // Update existing
-        const { error } = await supabase
-          .from('user_achievements')
-          .update({
-            progress,
-            completed,
-            completed_at: completed ? new Date().toISOString() : userAchievement.completed_at,
-          })
-          .eq('id', userAchievement.id);
+      // Use upsert to avoid duplicate key errors
+      const wasCompleted = userAchievement?.completed || false;
+      
+      const { error } = await supabase
+        .from('user_achievements')
+        .upsert({
+          user_id: userId,
+          achievement_key: achievementKey,
+          progress,
+          completed,
+          completed_at: completed && !wasCompleted ? new Date().toISOString() : userAchievement?.completed_at,
+        }, {
+          onConflict: 'user_id,achievement_key',
+          ignoreDuplicates: false
+        });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        // Show notification if just completed
-        if (completed && !userAchievement.completed) {
-          toast.success(`Achievement Unlocked: ${achievement.name}!`, {
-            description: `Claim your reward: ${achievement.reward_amount} ${achievement.reward_type === 'premium_currency' ? 'Gems' : 'Gold'}`,
-          });
-        }
-      } else {
-        // Create new
-        const { error } = await supabase
-          .from('user_achievements')
-          .insert({
-            user_id: userId,
-            achievement_key: achievementKey,
-            progress,
-            completed,
-            completed_at: completed ? new Date().toISOString() : null,
-          });
-
-        if (error) throw error;
-
-        if (completed) {
-          toast.success(`Achievement Unlocked: ${achievement.name}!`, {
-            description: `Claim your reward: ${achievement.reward_amount} ${achievement.reward_type === 'premium_currency' ? 'Gems' : 'Gold'}`,
-          });
-        }
+      // Show notification if just completed
+      if (completed && !wasCompleted) {
+        toast.success(`Achievement Unlocked: ${achievement.name}!`, {
+          description: `Claim your reward: ${achievement.reward_amount} ${achievement.reward_type === 'premium_currency' ? 'Gems' : 'Gold'}`,
+        });
       }
 
       await loadUserAchievements();

@@ -19,6 +19,7 @@ import { Social } from "@/components/Social";
 import { BattlePass } from "@/components/BattlePass";
 import { SeasonalChallenges } from "@/components/SeasonalChallenges";
 import PremiumShop from "@/components/PremiumShop";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { useCosmetics } from "@/hooks/useCosmetics";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useDailyRewards } from "@/hooks/useDailyRewards";
@@ -161,13 +162,7 @@ const Index = () => {
   }, [inventory, user?.id]);
 
   if (authLoading || gameLoading || !progress || !currentEnemy) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-background">
-        <div className="text-2xl font-bold text-muted-foreground animate-pulse">
-          Loading...
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
@@ -311,8 +306,6 @@ const Index = () => {
         currency={progress.currency}
         onPurchase={() => {
           refreshCosmetics();
-          // Trigger progress reload by forcing component re-render
-          window.location.reload();
         }}
       />
     </div>
