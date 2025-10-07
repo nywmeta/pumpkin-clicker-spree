@@ -1,4 +1,4 @@
-import { ShoppingBag, Package, Settings, Trophy, Gift, Sparkles, Award, Calendar, Users, Zap, Target } from "lucide-react";
+import { ShoppingBag, Package, Settings, Trophy, Gift, Sparkles, Award, Calendar, Users, Zap, Target, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MobileNavProps {
@@ -13,6 +13,7 @@ interface MobileNavProps {
   onSocialClick: () => void;
   onBattlePassClick: () => void;
   onChallengesClick: () => void;
+  onPremiumShopClick: () => void;
 }
 
 export const MobileNav = ({
@@ -27,10 +28,11 @@ export const MobileNav = ({
   onSocialClick,
   onBattlePassClick,
   onChallengesClick,
+  onPremiumShopClick,
 }: MobileNavProps) => {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t z-50">
-      <div className="grid grid-cols-6 sm:grid-cols-11 gap-1 p-2">
+      <div className="grid grid-cols-6 sm:grid-cols-12 gap-1 p-2">
         <Button
           variant="ghost"
           size="lg"
@@ -69,6 +71,16 @@ export const MobileNav = ({
         >
           <ShoppingBag className="h-5 w-5" />
           <span className="text-xs">Shop</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="lg"
+          onClick={onPremiumShopClick}
+          className="flex flex-col gap-1 h-auto py-2"
+        >
+          <Gem className="h-5 w-5 text-primary" />
+          <span className="text-xs">Premium</span>
         </Button>
 
         <Button

@@ -18,6 +18,7 @@ import { DailyReward } from "@/components/DailyReward";
 import { Social } from "@/components/Social";
 import { BattlePass } from "@/components/BattlePass";
 import { SeasonalChallenges } from "@/components/SeasonalChallenges";
+import PremiumShop from "@/components/PremiumShop";
 import { useCosmetics } from "@/hooks/useCosmetics";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useDailyRewards } from "@/hooks/useDailyRewards";
@@ -37,8 +38,9 @@ const Index = () => {
   const [socialOpen, setSocialOpen] = useState(false);
   const [battlePassOpen, setBattlePassOpen] = useState(false);
   const [challengesOpen, setChallengesOpen] = useState(false);
+  const [premiumShopOpen, setPremiumShopOpen] = useState(false);
   
-  const { cosmetics, openLootbox, equipCosmetic } = useCosmetics(user?.id);
+  const { cosmetics, openLootbox, equipCosmetic, refreshCosmetics } = useCosmetics(user?.id);
   const { 
     achievements, 
     userAchievements, 
@@ -240,6 +242,7 @@ const Index = () => {
         onSocialClick={() => setSocialOpen(true)}
         onBattlePassClick={() => setBattlePassOpen(true)}
         onChallengesClick={() => setChallengesOpen(true)}
+        onPremiumShopClick={() => setPremiumShopOpen(true)}
       />
 
       <LootboxOpening
@@ -298,6 +301,19 @@ const Index = () => {
         onClose={() => setChallengesOpen(false)}
         challenges={challenges}
         userProgress={challengeProgress}
+      />
+
+      <PremiumShop
+        open={premiumShopOpen}
+        onClose={() => setPremiumShopOpen(false)}
+        userId={user?.id || ''}
+        premiumCurrency={progress.premium_currency || 0}
+        currency={progress.currency}
+        onPurchase={() => {
+          refreshCosmetics();
+          // Trigger progress reload by forcing component re-render
+          window.location.reload();
+        }}
       />
     </div>
   );
