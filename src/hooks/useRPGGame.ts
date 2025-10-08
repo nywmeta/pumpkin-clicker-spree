@@ -4,12 +4,11 @@ import { Enemy, PlayerProgress, BossAttack, Upgrade, InventoryItem, RarityTier }
 import { toast } from "sonner";
 
 const ENEMY_TYPES = [
-  { name: "Pumpkin Minion", healthMultiplier: 1, currencyMultiplier: 1, sprite: "pumpkin" },
-  { name: "Karen", healthMultiplier: 1.3, currencyMultiplier: 1.1, sprite: "pumpkin" },
-  { name: "Snus", healthMultiplier: 1.5, currencyMultiplier: 1.2, sprite: "pumpkin" },
-  { name: "Slow Driver", healthMultiplier: 1.7, currencyMultiplier: 1.3, sprite: "pumpkin" },
-  { name: "Bed", healthMultiplier: 1.9, currencyMultiplier: 1.4, sprite: "pumpkin" },
-  { name: "Job Application", healthMultiplier: 2.2, currencyMultiplier: 1.6, sprite: "pumpkin" },
+  { name: "Pumpkin Grunt", healthMultiplier: 1, currencyMultiplier: 1, sprite: "pumpkin-monster-1" },
+  { name: "Gourd Guardian", healthMultiplier: 1.3, currencyMultiplier: 1.1, sprite: "pumpkin-monster-2" },
+  { name: "Vine Stalker", healthMultiplier: 1.5, currencyMultiplier: 1.2, sprite: "pumpkin-monster-3" },
+  { name: "Jack's Wrath", healthMultiplier: 1.7, currencyMultiplier: 1.3, sprite: "pumpkin-monster-4" },
+  { name: "Harvest Horror", healthMultiplier: 1.9, currencyMultiplier: 1.4, sprite: "pumpkin-monster-5" },
 ];
 
 const UPGRADES: Upgrade[] = [

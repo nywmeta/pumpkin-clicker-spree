@@ -4,15 +4,13 @@ import { useRPGGame } from "@/hooks/useRPGGame";
 import { HUD } from "@/components/HUD";
 import { EnemyDisplay } from "@/components/EnemyDisplay";
 import { UpgradeShop } from "@/components/UpgradeShop";
-import { WeaponSlots } from "@/components/WeaponSlots";
 import { DodgeOverlay } from "@/components/DodgeOverlay";
-import { Inventory } from "@/components/Inventory";
+import { UnifiedInventory } from "@/components/UnifiedInventory";
 import { Settings } from "@/components/Settings";
 import { MobileNav } from "@/components/MobileNav";
 import { Leaderboard } from "@/components/Leaderboard";
 import RaidBoss from "@/components/RaidBoss";
 import LootboxOpening from "@/components/LootboxOpening";
-import CosmeticInventory from "@/components/CosmeticInventory";
 import { Achievements } from "@/components/Achievements";
 import { DailyReward } from "@/components/DailyReward";
 import { Social } from "@/components/Social";
@@ -33,7 +31,6 @@ const Index = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const [lootboxOpen, setLootboxOpen] = useState(false);
-  const [cosmeticOpen, setCosmeticOpen] = useState(false);
   const [achievementsOpen, setAchievementsOpen] = useState(false);
   const [dailyRewardOpen, setDailyRewardOpen] = useState(false);
   const [socialOpen, setSocialOpen] = useState(false);
@@ -169,14 +166,18 @@ const Index = () => {
     <div className="h-screen overflow-hidden bg-background flex flex-col relative">
       <HUD progress={progress} />
       
-      <Inventory
+      <UnifiedInventory
         open={inventoryOpen}
         onClose={() => setInventoryOpen(false)}
         items={inventory}
+        cosmetics={cosmetics}
         craftingMaterials={progress.crafting_materials}
-        onEquip={equipWeapon}
-        onSalvage={salvageItem}
-        onCraft={craftWeapon}
+        leftHandWeapon={progress.left_hand_weapon}
+        rightHandWeapon={progress.right_hand_weapon}
+        onEquipItem={equipWeapon}
+        onSalvageItem={salvageItem}
+        onCraftItem={craftWeapon}
+        onEquipCosmetic={equipCosmetic}
       />
       
       <UpgradeShop
@@ -210,11 +211,6 @@ const Index = () => {
         />
       </div>
       
-      <WeaponSlots
-        leftHand={progress.left_hand_weapon}
-        rightHand={progress.right_hand_weapon}
-      />
-      
       <DodgeOverlay
         attack={currentAttack}
         onDodge={handleDodge}
@@ -231,7 +227,6 @@ const Index = () => {
         onLeaderboardClick={() => setLeaderboardOpen(true)}
         onSettingsClick={() => setSettingsOpen(true)}
         onLootboxClick={() => setLootboxOpen(true)}
-        onCosmeticClick={() => setCosmeticOpen(true)}
         onAchievementsClick={() => setAchievementsOpen(true)}
         onDailyRewardClick={() => setDailyRewardOpen(true)}
         onSocialClick={() => setSocialOpen(true)}
@@ -245,13 +240,6 @@ const Index = () => {
         onClose={() => setLootboxOpen(false)}
         onOpen={openLootbox}
         premiumCurrency={progress.premium_currency || 0}
-      />
-
-      <CosmeticInventory
-        open={cosmeticOpen}
-        onClose={() => setCosmeticOpen(false)}
-        cosmetics={cosmetics}
-        onEquip={equipCosmetic}
       />
 
       <Achievements

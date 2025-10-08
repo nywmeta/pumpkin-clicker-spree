@@ -7,7 +7,6 @@ interface MobileNavProps {
   onSettingsClick: () => void;
   onLeaderboardClick: () => void;
   onLootboxClick: () => void;
-  onCosmeticClick: () => void;
   onAchievementsClick: () => void;
   onDailyRewardClick: () => void;
   onSocialClick: () => void;
@@ -22,7 +21,6 @@ export const MobileNav = ({
   onSettingsClick,
   onLeaderboardClick,
   onLootboxClick,
-  onCosmeticClick,
   onAchievementsClick,
   onDailyRewardClick,
   onSocialClick,
@@ -41,16 +39,6 @@ export const MobileNav = ({
         >
           <Package className="h-5 w-5" />
           <span className="text-xs">Items</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="lg"
-          onClick={onCosmeticClick}
-          className="flex flex-col gap-1 h-auto py-2"
-        >
-          <Sparkles className="h-5 w-5" />
-          <span className="text-xs">Cosmetic</span>
         </Button>
 
         <Button
